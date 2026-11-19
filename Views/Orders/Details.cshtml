@@ -1,0 +1,111 @@
+@model FoodDeliverySystem.Models.Order
+@{ ViewData["Title"] = $"Order #{Model.Id}"; }
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-bag-check"></i> Order #@Model.Id</h1>
+    <div>
+        @{
+            var badgeClass = Model.Status switch
+            {
+                FoodDeliverySystem.Models.OrderStatus.Delivered => "bg-success",
+                FoodDeliverySystem.Models.OrderStatus.Cancelled => "bg-danger",
+                FoodDeliverySystem.Models.OrderStatus.OutForDelivery => "bg-info",
+                FoodDeliverySystem.Models.OrderStatus.Preparing => "bg-primary",
+                _ => "bg-warning text-dark"
+            };
+        }
+        <span class="badge @badgeClass fs-6 p-2">@Model.Status</span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white"><h5 class="mb-0">Order Details</h5></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5">Order Date</dt><dd class="col-sm-7">@Model.OrderDate.ToString("MMM dd, yyyy hh:mm tt")</dd>
+                    <dt class="col-sm-5">Customer</dt><dd class="col-sm-7"><a asp-controller="Customers" asp-action="Details" asp-route-id="@Model.CustomerId">@Model.Customer.Name</a></dd>
+                    <dt class="col-sm-5">Restaurant</dt><dd class="col-sm-7"><a asp-controller="Restaurants" asp-action="Details" asp-route-id="@Model.RestaurantId">@Model.Restaurant.Name</a></dd>
+                    <dt class="col-sm-5">Driver</dt><dd class="col-sm-7">@(Model.DeliveryDriver != null ? Model.DeliveryDriver.Name : "Unassigned")</dd>
+                    <dt class="col-sm-5">Delivery Address</dt><dd class="col-sm-7">@Model.DeliveryAddress</dd>
+                    @if (Model.EstimatedDeliveryTime.HasValue)
+                    {
+                        <dt class="col-sm-5">Est. Delivery</dt><dd class="col-sm-7">@Model.EstimatedDeliveryTime.Value.ToString("hh:mm tt")</dd>
+                    }
+                    @if (Model.ActualDeliveryTime.HasValue)
+                    {
+                        <dt class="col-sm-5">Delivered At</dt><dd class="col-sm-7">@Model.ActualDeliveryTime.Value.ToString("hh:mm tt")</dd>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <dt class="col-sm-5">Notes</dt><dd class="col-sm-7">@Model.Notes</dd>
+                    }
+                    <dt class="col-sm-5 fs-5 mt-2">Total</dt><dd class="col-sm-7 fs-5 mt-2 fw-bold text-success">$@Model.TotalAmount.ToString("F2")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white"><h5 class="mb-0">Order Items (@Model.OrderItems.Count)</h5></div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead><tr><th>Item</th><th class="text-center">Qty</th><th class="text-end">Price</th><th class="text-end">Subtotal</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <tr>
+                                <td>@item.MenuItem.Name</td>
+                                <td class="text-center">@item.Quantity</td>
+                                <td class="text-end">$@item.UnitPrice.ToString("F2")</td>
+                                <td class="text-end"><strong>$@item.Subtotal.ToString("F2")</strong></td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-dark">
+                            <td colspan="3" class="text-end fw-bold">Total:</td>
+                            <td class="text-end fw-bold">$@Model.TotalAmount.ToString("F2")</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        @if (Model.Status != FoodDeliverySystem.Models.OrderStatus.Delivered && Model.Status != FoodDeliverySystem.Models.OrderStatus.Cancelled)
+        {
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning"><h5 class="mb-0">Update Status</h5></div>
+                <div class="card-body">
+                    <form asp-action="UpdateStatus" method="post" class="d-flex gap-2 flex-wrap">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        @if (Model.Status == FoodDeliverySystem.Models.OrderStatus.Pending)
+                        {
+                            <button type="submit" name="newStatus" value="Confirmed" class="btn btn-primary"><i class="bi bi-check"></i> Confirm</button>
+                        }
+                        @if (Model.Status == FoodDeliverySystem.Models.OrderStatus.Confirmed)
+                        {
+                            <button type="submit" name="newStatus" value="Preparing" class="btn btn-primary"><i class="bi bi-fire"></i> Start Preparing</button>
+                        }
+                        @if (Model.Status == FoodDeliverySystem.Models.OrderStatus.Preparing)
+                        {
+                            <button type="submit" name="newStatus" value="OutForDelivery" class="btn btn-info"><i class="bi bi-truck"></i> Out for Delivery</button>
+                        }
+                        @if (Model.Status == FoodDeliverySystem.Models.OrderStatus.OutForDelivery)
+                        {
+                            <button type="submit" name="newStatus" value="Delivered" class="btn btn-success"><i class="bi bi-check-circle"></i> Mark Delivered</button>
+                        }
+                        <button type="submit" name="newStatus" value="Cancelled" class="btn btn-outline-danger"><i class="bi bi-x-circle"></i> Cancel</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning"><i class="bi bi-pencil"></i> Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

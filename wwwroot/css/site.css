@@ -1,0 +1,32 @@
+html {
+    font-size: 14px;
+}
+
+body {
+    background-color: #f8f9fa;
+}
+
+.footer {
+    background-color: #f8f9fa;
+}
+
+.table th {
+    font-weight: 600;
+}
+
+.card {
+    transition: transform 0.15s ease-in-out;
+}
+
+a.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.navbar-brand i {
+    font-size: 1.3rem;
+}
+
+.badge {
+    font-size: 0.8em;
+}

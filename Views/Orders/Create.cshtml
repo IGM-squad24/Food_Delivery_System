@@ -1,0 +1,57 @@
+@model FoodDeliverySystem.Models.Order
+@{ ViewData["Title"] = "New Order"; }
+
+<h1><i class="bi bi-plus-circle"></i> New Order</h1>
+<div class="row"><div class="col-md-8">
+    <div class="card shadow-sm"><div class="card-body">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="CustomerId" class="form-label"></label>
+                <select asp-for="CustomerId" class="form-select" asp-items="@(ViewData["CustomerId"] as Microsoft.AspNetCore.Mvc.Rendering.SelectList)">
+                    <option value="">-- Select Customer --</option>
+                </select>
+                <span asp-validation-for="CustomerId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="RestaurantId" class="form-label"></label>
+                <select asp-for="RestaurantId" class="form-select" asp-items="@(ViewData["RestaurantId"] as Microsoft.AspNetCore.Mvc.Rendering.SelectList)">
+                    <option value="">-- Select Restaurant --</option>
+                </select>
+                <span asp-validation-for="RestaurantId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="DeliveryDriverId" class="form-label"></label>
+                <select asp-for="DeliveryDriverId" class="form-select" asp-items="@(ViewData["DeliveryDriverId"] as Microsoft.AspNetCore.Mvc.Rendering.SelectList)">
+                    <option value="">-- Assign Later --</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label asp-for="DeliveryAddress" class="form-label"></label>
+                <input asp-for="DeliveryAddress" class="form-control" />
+                <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="TotalAmount" class="form-label"></label>
+                    <div class="input-group"><span class="input-group-text">$</span>
+                        <input asp-for="TotalAmount" class="form-control" />
+                    </div>
+                    <span asp-validation-for="TotalAmount" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="EstimatedDeliveryTime" class="form-label"></label>
+                    <input asp-for="EstimatedDeliveryTime" class="form-control" type="datetime-local" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Notes" class="form-label"></label>
+                <textarea asp-for="Notes" class="form-control" rows="2" placeholder="Special instructions..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Place Order</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div></div>
+</div></div>
+
+@section Scripts { @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} }

@@ -1,0 +1,23 @@
+@model FoodDeliverySystem.Models.DeliveryDriver
+@{ ViewData["Title"] = "Delete Driver"; }
+
+<h1 class="text-danger"><i class="bi bi-exclamation-triangle"></i> Delete Driver</h1>
+<h4>Are you sure you want to remove this driver?</h4>
+
+<div class="card shadow-sm" style="max-width: 600px;">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Name</dt><dd class="col-sm-8">@Model.Name</dd>
+            <dt class="col-sm-4">Phone</dt><dd class="col-sm-8">@Model.Phone</dd>
+            <dt class="col-sm-4">Vehicle</dt><dd class="col-sm-8">@Model.VehicleType</dd>
+            <dt class="col-sm-4">License #</dt><dd class="col-sm-8">@Model.LicenseNumber</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

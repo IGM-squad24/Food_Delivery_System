@@ -1,0 +1,46 @@
+@model FoodDeliverySystem.Models.Restaurant
+@{ ViewData["Title"] = "Restaurant Details"; }
+
+<h1><i class="bi bi-shop"></i> @Model.Name</h1>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white"><h5 class="mb-0">Restaurant Information</h5></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Address</dt><dd class="col-sm-8">@Model.Address</dd>
+                    <dt class="col-sm-4">Phone</dt><dd class="col-sm-8">@Model.Phone</dd>
+                    <dt class="col-sm-4">Hours</dt><dd class="col-sm-8">@Model.OpeningTime.ToString(@"hh\:mm") - @Model.ClosingTime.ToString(@"hh\:mm")</dd>
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                        @if (Model.IsActive) { <span class="badge bg-success">Active</span> }
+                        else { <span class="badge bg-secondary">Inactive</span> }
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white"><h5 class="mb-0">Menu Items (@Model.MenuItems.Count)</h5></div>
+            <div class="card-body">
+                @if (Model.MenuItems.Any())
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var item in Model.MenuItems)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @item.Name <span class="badge bg-primary rounded-pill">$@item.Price.ToString("F2")</span>
+                            </li>
+                        }
+                    </ul>
+                }
+                else { <p class="text-muted">No menu items yet.</p> }
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning"><i class="bi bi-pencil"></i> Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

@@ -1,0 +1,148 @@
+@model IEnumerable<FoodDeliverySystem.Models.Order>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-speedometer2"></i> Dashboard</h1>
+    <a asp-controller="Orders" asp-action="Create" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> New Order</a>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-4 col-lg-2 mb-3">
+        <div class="card shadow-sm border-start border-primary border-4 h-100">
+            <div class="card-body text-center">
+                <div class="text-muted small">Total Orders</div>
+                <div class="fs-2 fw-bold text-primary">@ViewData["TotalOrders"]</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2 mb-3">
+        <div class="card shadow-sm border-start border-warning border-4 h-100">
+            <div class="card-body text-center">
+                <div class="text-muted small">Active Orders</div>
+                <div class="fs-2 fw-bold text-warning">@ViewData["PendingOrders"]</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2 mb-3">
+        <div class="card shadow-sm border-start border-success border-4 h-100">
+            <div class="card-body text-center">
+                <div class="text-muted small">Revenue</div>
+                <div class="fs-2 fw-bold text-success">$@(((decimal)(ViewData["TotalRevenue"] ?? 0m)).ToString("F0"))</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2 mb-3">
+        <div class="card shadow-sm border-start border-info border-4 h-100">
+            <div class="card-body text-center">
+                <div class="text-muted small">Restaurants</div>
+                <div class="fs-2 fw-bold text-info">@ViewData["TotalRestaurants"]</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2 mb-3">
+        <div class="card shadow-sm border-start border-secondary border-4 h-100">
+            <div class="card-body text-center">
+                <div class="text-muted small">Customers</div>
+                <div class="fs-2 fw-bold text-secondary">@ViewData["TotalCustomers"]</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2 mb-3">
+        <div class="card shadow-sm border-start border-danger border-4 h-100">
+            <div class="card-body text-center">
+                <div class="text-muted small">Drivers</div>
+                <div class="fs-2 fw-bold text-danger">@ViewData["TotalDrivers"]</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="card shadow-sm">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Orders</h5>
+        <a asp-controller="Orders" asp-action="Index" class="btn btn-sm btn-outline-light">View All</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Restaurant</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td><strong>#@order.Id</strong></td>
+                        <td>@order.Customer.Name</td>
+                        <td>@order.Restaurant.Name</td>
+                        <td>@order.OrderDate.ToString("MMM dd, hh:mm tt")</td>
+                        <td><strong>$@order.TotalAmount.ToString("F2")</strong></td>
+                        <td>
+                            @{
+                                var badgeClass = order.Status switch
+                                {
+                                    FoodDeliverySystem.Models.OrderStatus.Delivered => "bg-success",
+                                    FoodDeliverySystem.Models.OrderStatus.Cancelled => "bg-danger",
+                                    FoodDeliverySystem.Models.OrderStatus.OutForDelivery => "bg-info",
+                                    FoodDeliverySystem.Models.OrderStatus.Preparing => "bg-primary",
+                                    _ => "bg-warning text-dark"
+                                };
+                            }
+                            <span class="badge @badgeClass">@order.Status</span>
+                        </td>
+                        <td>
+                            <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Quick Links -->
+<div class="row mt-4">
+    <div class="col-md-3 mb-3">
+        <a asp-controller="Restaurants" asp-action="Create" class="card shadow-sm text-decoration-none h-100">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-shop fs-1 text-primary"></i>
+                <h6 class="mt-2">Add Restaurant</h6>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 mb-3">
+        <a asp-controller="MenuItems" asp-action="Create" class="card shadow-sm text-decoration-none h-100">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-card-list fs-1 text-success"></i>
+                <h6 class="mt-2">Add Menu Item</h6>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 mb-3">
+        <a asp-controller="Customers" asp-action="Create" class="card shadow-sm text-decoration-none h-100">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-person-plus fs-1 text-info"></i>
+                <h6 class="mt-2">Add Customer</h6>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 mb-3">
+        <a asp-controller="DeliveryDrivers" asp-action="Create" class="card shadow-sm text-decoration-none h-100">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-bicycle fs-1 text-danger"></i>
+                <h6 class="mt-2">Add Driver</h6>
+            </div>
+        </a>
+    </div>
+</div>
